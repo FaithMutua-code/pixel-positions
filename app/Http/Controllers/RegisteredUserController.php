@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 #use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\Rules\File;
+#use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -33,10 +33,11 @@ class RegisteredUserController extends Controller
          
        $employerAttri=$request->validate([
         'employer'=>'required',
-        'logo'=>'required',File::types(['jpg','jpeg','png'])->max(1024)
+          'logo' => ['required', \Illuminate\Validation\Rules\File::types(['jpg','jpeg','png'])->max(1024)],
        ]);
+
        $user=User::create($userAttri);
-      
+
        $logoPath=$request->file('logo')->store('logos');
 
        $user->employer()->create([

@@ -10,4 +10,4 @@
     }
 @endphp
 
-<a href="/tag/{{ strtolower($tag->name )}}" class="{{ $classes }}">{{ $tag->name }}</a>
+<a href="{{ route('tags.show', $tag) }}" class="{{ $classes }}">{{ $tag->name }}</a>
