@@ -18,7 +18,9 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'=>$this->fake()->unique()->name,
+            // Generate short tag words (not person names)
+            'name' => $this->faker->unique()->word(),
+            // For multi-word tags: 'name' => $this->faker->unique()->words(2, true),
         ];
     }
 }
