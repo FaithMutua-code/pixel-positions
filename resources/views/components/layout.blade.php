@@ -10,7 +10,7 @@
         rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-black font-hanken-grotesk text-white border-b border-white/10">
+<body class="bg-black font-hanken-grotesk text-white border-b border-white/10 mb-40">
 <div class="px-10">  
       <nav class="flex justify-between items-center py-4">
         <div>
