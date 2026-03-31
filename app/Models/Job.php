@@ -8,7 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Job extends Model
 {
     /** @use HasFactory<\Database\Factories\JobFactory> */
-    use HasFactory;   
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'salary',
+        'location',
+        'schedule',
+        'url',
+        'featured',
+    ];
+
     public function tag(string $name)
     {
      $tag =Tag::firstOrCreate(['name'=>$name]);  

@@ -1,9 +1,13 @@
-@props(['job' => null])
+@props(['job'])
 <x-panel class="flex flex-col text-left group h-full">
-       <div class="text-left">{{ $job->employer->name }}</div>
+       <div class="text-sm self-start">{{ $job->employer->name }}</div>
     <div class="py-8 flex-1">
         <h3 class="mb-4 text-xl font-bold group-hover:text-indigo-600 transition-colors duration-300">
-            {{ $job->title ?? 'Job Title' }}
+
+            <a href="{{$job->url}}" target="_blank">
+ {{ $job->title ?? 'Job Title' }}
+            </a>
+           
         </h3>
         <p class="text-sm text-gray-400 mt-2">
              {{ $job->salary ?? 'Salary not specified' }}
@@ -17,6 +21,6 @@
             @endforeach
         </div>
 
-        <x-employer-logo :width="42" :employer="$job?->employer" />
+        <x-employer-logo :width="42" :employer="$job->employer" />
     </div>
 </x-panel>

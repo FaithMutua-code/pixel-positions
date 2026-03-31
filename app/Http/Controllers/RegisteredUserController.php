@@ -38,11 +38,11 @@ class RegisteredUserController extends Controller
 
        $user=User::create($userAttri);
 
-       $logoPath=$request->file('logo')->store('logos');
+       $logoPath = $request->file('logo')->store('logos', 'public');
 
        $user->employer()->create([
-        'name'=>$employerAttri['employer'],
-        'logo'=>$logoPath,
+        'name' => $employerAttri['employer'],
+        'logo' => $logoPath,
        ]);
         Auth::login($user);
        return redirect('/');
