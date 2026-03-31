@@ -11,7 +11,7 @@
         <x-forms.input name="employer" label="Employer Name" />
         <x-forms.input name="logo" type="file" label="Employer Logo" />
 
-        <x-forms.button>Register</x-forms.button>
+        <x-forms.button class="mt-9">Register</x-forms.button>
 
     </x-forms.form>
 </x-layout>    

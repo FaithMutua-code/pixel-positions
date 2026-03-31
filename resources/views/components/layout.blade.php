@@ -17,19 +17,17 @@
             <a href="/"><img src="{{ asset('images/logo.svg') }}" alt="Logo"/></a>
         </div>
         <div class="space-x-6 font-bold ">
-            <a href="#">Jobs</a>
-            <a href="#">Careers</a>
-            <a href="#">Salaries</a>
-             <a href="#">Companies</a>
-
+            <a href="/jobs">Jobs</a>
+            <a href="/careers">Careers</a>
+            <a href="/salaries">Salaries</a>
+            <a href="/companies">Companies</a>
         </div>
     @auth
        <a href="/jobs/create"> Post a Job</a>
          <form method="POST" action="/logout" class="inline">
           @csrf
-          @method('DELETE')
           <button type="submit"> Logout</button>
-        
+         </form>
     @endauth
 
     @guest
