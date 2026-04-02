@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
@@ -38,7 +39,9 @@ class JobController extends Controller
      */
 public function store(StoreJobRequest $request)
 {
-    $attributes = $request->validated();
+    $attributes = $request->validate([
+        
+    ]);
     $attributes['featured'] = $request->boolean('featured');
 
     $employer = Auth::user()->employer;
@@ -65,24 +68,68 @@ public function store(StoreJobRequest $request)
      */
     public function show(Job $job)
     {
-        //
+     return view('jobs.show',['job'=>$job]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Job $job)
-    {
-        //
+  public function edit(Job $job)
+{
+
+    $employer = Auth::user()->employer;
+
+    if (! $employer) {
+        abort(403, 'Employer account required to edit jobs.'); // Changed from 'post' to 'edit'
     }
+    
+    // Add ownership check here too!
+    if ($job->employer_id !== $employer->id) {
+        abort(403, 'You can only edit your own jobs.');
+    }
+    
+    return view('jobs.edit', ['job' => $job]);
+}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateJobRequest $request, Job $job)
-    {
-        //
+  public function update(Request $request, Job $job)
+{
+    $employer = Auth::user()->employer;
+
+    // Fix: Use $job->employer_id instead of $job->employer->id
+    if (! $employer || $job->employer_id !== $employer->id) {
+        abort(403, 'You can only edit your own jobs.');
     }
+    
+    $validated = $request->validate([
+        'title' => ['required', 'string', 'max:255'],
+        'salary' => ['required', 'string', 'max:255'],
+        'location' => ['required', 'string', 'max:255'],
+        'schedule' => ['required', Rule::in(['full-time', 'part-time', 'contract'])],
+        'url' => ['required', 'url'],
+        'featured' => ['nullable', 'boolean'],
+        'tags' => ['nullable', 'string'],
+    ]);
+
+    // Update job basic info
+    $job->update(Arr::except($validated, 'tags'));
+
+    // Handle tags - Remove old tags and add new ones
+    // First, detach all existing tags
+    $job->tags()->detach();
+    
+    // Then add new tags if provided
+    if (!empty($validated['tags'])) {
+        foreach (explode(',', $validated['tags']) as $tagName) {
+            $job->tag(trim($tagName));
+        }
+    }
+    
+    // Redirect with success message (moved outside the if statement)
+    return redirect('/jobs/' . $job->id)->with('success', 'Job updated successfully!');
+}
 
     /**
      * Remove the specified resource from storage.

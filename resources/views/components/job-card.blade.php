@@ -4,8 +4,8 @@
     <div class="py-8 flex-1">
         <h3 class="mb-4 text-xl font-bold group-hover:text-indigo-600 transition-colors duration-300">
 
-            <a href="{{$job->url}}" target="_blank">
- {{ $job->title ?? 'Job Title' }}
+            <a href="{{ route('jobs.show', $job->id) }}" target="_blank">
+ {{ $job->title }}
             </a>
            
         </h3>
