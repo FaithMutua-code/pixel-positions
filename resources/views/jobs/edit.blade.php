@@ -1,36 +1,56 @@
 <x-layout>
     <x-page-heading>Update Job</x-page-heading>
-    <x-forms.form method="POST" action="/jobs/{{ $job->id }}" enctype="multipart/form-data">
-
-         @csrf
-         @method('PUT')
-        <x-forms.input name="title" label="Job Title" placeholder="CEO" value="{{ $job->title }}"/>
-        <x-forms.input name="salary" label="Salary" placeholder="$120k"value="{{ $job->salary }}" />
-        <x-forms.input name="location" label="Location" placeholder="New York" value="{{ $job->location }}"/>
+    
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
+   <form method="POST" action="{{ route('jobs.update', $job->id) }}">
+       @csrf
+       @method('PUT')
+       
+        
+        <x-forms.input name="title" label="Job Title" placeholder="CEO" value="{{ old('title', $job->title) }}"/>
+        <x-forms.input name="salary" label="Salary" placeholder="$120k" value="{{ old('salary', $job->salary) }}" />
+        <x-forms.input name="location" label="Location" placeholder="New York" value="{{ old('location', $job->location) }}"/>
 
         <x-forms.select name="schedule" label="Schedule">
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="contract">Contract</option>
+            <option value="full-time" {{ old('schedule', $job->schedule) == 'full-time' ? 'selected' : '' }}>Full-time</option>
+            <option value="part-time" {{ old('schedule', $job->schedule) == 'part-time' ? 'selected' : '' }}>Part-time</option>
+            <option value="contract" {{ old('schedule', $job->schedule) == 'contract' ? 'selected' : '' }}>Contract</option>
         </x-forms.select>
 
-        <x-forms.checkbox name="featured" label="Feature (cost extra)" />
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Feature (cost extra)</label>
+            <input type="checkbox" name="featured" value="1" {{ old('featured', $job->featured) ? 'checked' : '' }} class="rounded border-gray-300">
+            @error('featured')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
 
-        <x-forms.input name="url" label="URL" placeholder="https://example.com/job" />
+        <x-forms.input name="url" label="URL" placeholder="https://example.com/job" value="{{ old('url', $job->url) }}" />
 
         <x-forms.divider />
 
-        <x-forms.input name="tags" value="{{ $job->tags }}" label="Tags (comma separated)" value="{{ $job->url }}" placeholder="PHP, Laravel, Developer" />
+        <x-forms.input name="tags" value="{{ old('tags', $job->tags->pluck('name')->join(', ')) }}" label="Tags (comma separated)" placeholder="PHP, Laravel, Developer" />
 
         <x-forms.button type="submit">Update Job</x-forms.button>
-    </x-forms.form>
+    </form>
 
-    <form method="POST" id="delete-form" action="/jobs/{{ $job->id }}" class="hidden pt-4">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Delete Job</button>
-
-
-           
-        </form>
+    <div class="pt-4">
+    <form method="POST" action="/jobs/{{ $job->id }}">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" 
+                onclick="return confirm('Are you sure you want to delete this job?')">
+            Delete Job
+        </button>
+    </form>
+</div>
 </x-layout>

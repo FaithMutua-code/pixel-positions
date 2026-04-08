@@ -12,7 +12,10 @@
             <option value="contract">Contract</option>
         </x-forms.select>
 
-        <x-forms.checkbox name="featured" label="Feature (cost extra)" />
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Feature (cost extra)</label>
+            <input type="checkbox" name="featured" value="1" {{ old('featured') ? 'checked' : '' }} class="rounded border-gray-300">
+        </div>
 
         <x-forms.input name="url" label="URL" placeholder="https://example.com/job" />
 

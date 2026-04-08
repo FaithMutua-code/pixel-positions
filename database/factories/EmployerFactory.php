@@ -22,6 +22,17 @@ class EmployerFactory extends Factory
             'name' => $this->faker->name,
             'logo' => $this->faker->imageUrl(),
             'user_id' => User::factory(),
+            'premium' => false,
         ];
+    }
+
+    /**
+     * Indicate that the employer is premium.
+     */
+    public function premium(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'premium' => true,
+        ]);
     }
 }

@@ -37,31 +37,38 @@ class JobController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(StoreJobRequest $request)
-{
-    $attributes = $request->validate([
-        
-    ]);
-    $attributes['featured'] = $request->boolean('featured');
+    public function store(Request $request)
+    {
+        $attributes = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'salary' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
+            'schedule' => ['required', Rule::in(['full-time', 'part-time', 'contract'])],
+            'url' => ['required', 'url'],
+            'featured' => ['nullable', 'boolean'],
+            'tags' => ['nullable', 'string'],
+        ]);
 
-    $employer = Auth::user()->employer;
+        // Handle featured checkbox - set to false if not present
+        $attributes['featured'] = $request->boolean('featured');
+        $employer = Auth::user()->employer;
 
-    if (! $employer) {
-        abort(403, 'Employer account required to post jobs.');
-    }
-
-    $job = $employer->jobs()->create(
-        Arr::except($attributes, 'tags')
-    );
-
-    if (!empty($attributes['tags'])) {
-        foreach (explode(',', $attributes['tags']) as $tag) {
-            $job->tag(trim($tag));
+        if (! $employer) {
+            abort(403, 'Employer account required to post jobs.');
         }
-    }
 
-    return redirect('/');
-}
+        $job = $employer->jobs()->create(
+            Arr::except($attributes, 'tags')
+        );
+
+        if (!empty($attributes['tags'])) {
+            foreach (explode(',', $attributes['tags']) as $tag) {
+                $job->tag(trim($tag));
+            }
+        }
+
+        return redirect('/');
+    }
 
     /**
      * Display the specified resource.
@@ -94,48 +101,77 @@ public function store(StoreJobRequest $request)
     /**
      * Update the specified resource in storage.
      */
-  public function update(Request $request, Job $job)
-{
-    $employer = Auth::user()->employer;
+    public function update(Request $request, Job $job)
+    {
+        try {
+            $employer = Auth::user()->employer;
 
-    // Fix: Use $job->employer_id instead of $job->employer->id
-    if (! $employer || $job->employer_id !== $employer->id) {
-        abort(403, 'You can only edit your own jobs.');
-    }
-    
-    $validated = $request->validate([
-        'title' => ['required', 'string', 'max:255'],
-        'salary' => ['required', 'string', 'max:255'],
-        'location' => ['required', 'string', 'max:255'],
-        'schedule' => ['required', Rule::in(['full-time', 'part-time', 'contract'])],
-        'url' => ['required', 'url'],
-        'featured' => ['nullable', 'boolean'],
-        'tags' => ['nullable', 'string'],
-    ]);
+            if (! $employer || $job->employer_id !== $employer->id) {
+                abort(403, 'You can only edit your own jobs.');
+            }
+            
+            $validated = $request->validate([
+                'title' => ['required', 'string', 'max:255'],
+                'salary' => ['required', 'string', 'max:255'],
+                'location' => ['required', 'string', 'max:255'],
+                'schedule' => ['required', Rule::in(['full-time', 'part-time', 'contract'])],
+                'url' => ['required', 'url'],
+                'featured' => ['nullable', 'boolean'],
+                'tags' => ['nullable', 'string'],
+            ]);
 
-    // Update job basic info
-    $job->update(Arr::except($validated, 'tags'));
+            // Handle featured checkbox - set to false if not present
+            $validated['featured'] = $request->boolean('featured');
 
-    // Handle tags - Remove old tags and add new ones
-    // First, detach all existing tags
-    $job->tags()->detach();
-    
-    // Then add new tags if provided
-    if (!empty($validated['tags'])) {
-        foreach (explode(',', $validated['tags']) as $tagName) {
-            $job->tag(trim($tagName));
+            // Check if user can create featured jobs
+            if ($validated['featured'] && !$this->canCreateFeaturedJobs()) {
+                return redirect()->back()->withErrors(['featured' => 'Featured jobs require a premium subscription.']);
+            }
+
+            // Update job with all fields including tags
+            $job->update(Arr::except($validated, 'tags'));
+
+            // Handle tags - Remove old tags and add new ones
+            $job->tags()->detach();
+            
+            if (!empty($validated['tags'])) {
+                foreach (explode(',', $validated['tags']) as $tag) {
+                    $job->tag(trim($tag));
+                }
+            }
+
+            return redirect()->route('jobs.show', $job)->with('success', 'Job updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['general' => 'An error occurred: ' . $e->getMessage()]);
         }
     }
-    
-    // Redirect with success message (moved outside the if statement)
-    return redirect('/jobs/' . $job->id)->with('success', 'Job updated successfully!');
-}
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Job $job)
     {
-        //
+         $employer = Auth::user()->employer;
+
+            if (! $employer || $job->employer_id !== $employer->id) {
+                abort(403, 'You can only delete your own jobs.');
+
+            } 
+            
+                $job->delete();
+
+                return redirect('/')->with('success', 'Job deleted successfully!');
+    }
+
+    private function canCreateFeaturedJobs()
+    {
+        $user = Auth::user();
+        
+        // Check if user has premium subscription
+        // This could be a field on the user model or employer model
+        // For now, we'll check if employer has a 'premium' field
+        $employer = $user->employer;
+        
+        return $employer && $employer->premium;
     }
 }

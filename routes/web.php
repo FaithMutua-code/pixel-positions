@@ -13,8 +13,10 @@ Route::middleware('auth')->group(function(){
   Route::get('/jobs/create', [JobController::class, 'create']);
 Route::post('/jobs', [JobController::class, 'store']);
 Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');
-Route::get('/jobs/{job}/edit',[JobController::class,'edit'])->middleware(['auth'])->can('edit', 'job');
-Route::put('/jobs/{job}', [JobController::class, 'update']);
+
+Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+Route::get('/jobs/{job}/edit',[JobController::class,'edit'])->name('jobs.edit');
+Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy');
 }); 
 
 
