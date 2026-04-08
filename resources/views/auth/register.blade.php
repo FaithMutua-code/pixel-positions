@@ -7,7 +7,7 @@
         <x-forms.input name="password" label="Password" type="password" />
         <x-forms.input name="password_confirmation" label="Confirm Password" type="password" />
  
-        <x.forms.divider />
+        <x-forms.divider />
         <x-forms.input name="employer" label="Employer Name" />
         <x-forms.input name="logo" type="file" label="Employer Logo" />
 
