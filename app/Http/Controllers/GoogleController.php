@@ -27,6 +27,12 @@ public function callback()
             'password' => bcrypt('random_password'),
         ]
     );
+    if (!$user->employer) {
+    $user->employer()->create([
+        'name' => $user->name . "'s Company",
+        'logo' => 'logos/default.png',
+    ]);
+    }
 
     Auth::login($user);
 

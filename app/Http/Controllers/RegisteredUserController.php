@@ -25,23 +25,23 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-       $userAttri=$request->validate([
+       $userAttributes=$request->validate([
         'name' => 'required',
         'email' => 'required|email|unique:users,email',
         'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::min(6)],
        ]);
          
-       $employerAttri=$request->validate([
+       $employerAttributes=$request->validate([
         'employer'=>'required',
           'logo' => ['required', \Illuminate\Validation\Rules\File::types(['jpg','jpeg','png'])->max(1024)],
        ]);
 
-       $user=User::create($userAttri);
+       $user=User::create($userAttributes);
 
        $logoPath = $request->file('logo')->store('logos', 'public');
 
        $user->employer()->create([
-        'name' => $employerAttri['employer'],
+        'name' => $employerAttributes['employer'],
         'logo' => $logoPath,
        ]);
         Auth::login($user);
