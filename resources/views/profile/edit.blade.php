@@ -25,8 +25,7 @@
         @if($user->employer && $user->employer->logo)
     <div class="mb-2">
         <p class="text-sm text-gray-400">Current Logo:</p>
-        <img src="{{ asset('storage/' . $user->employer->logo) }}"
-             class="rounded">
+       <x-employer-logo :width="200" :employer="$user->employer"  class="rounded-sm " />
     </div>
 @endif
 
