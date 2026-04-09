@@ -7,9 +7,12 @@ use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [JobController::class, 'index']);
 Route::middleware('auth')->group(function(){
+  Route::get('/profile', [ProfileController::class, 'edit']);
+Route::patch('/profile', [ProfileController::class, 'update']);
   Route::get('/jobs/create', [JobController::class, 'create']);
 Route::post('/jobs', [JobController::class, 'store']);
 Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');

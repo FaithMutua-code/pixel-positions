@@ -24,6 +24,7 @@
         </div>
     @auth
        <a href="/jobs/create"> Post a Job</a>
+        <a href="/profile"> My Profile</a>
          <form method="POST" action="/logout" class="inline">
           @csrf
           <button type="submit"> Logout</button>
