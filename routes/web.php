@@ -6,7 +6,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TagController;
-
+use App\Http\Controllers\GoogleController;
 
 Route::get('/', [JobController::class, 'index']);
 Route::middleware('auth')->group(function(){
@@ -30,6 +30,9 @@ Route::middleware('guest')->group(function(){
 
 Route::get('/login', [SessionController::class, 'create']);
 Route::post('/login', [SessionController::class, 'store']);
+
+Route::get('/auth/google', [GoogleController::class, 'redirect']);
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 });
 
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth');

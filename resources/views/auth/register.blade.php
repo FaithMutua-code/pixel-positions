@@ -14,4 +14,5 @@
         <x-forms.button class="mt-9">Register</x-forms.button>
 
     </x-forms.form>
+ 
 </x-layout>    
