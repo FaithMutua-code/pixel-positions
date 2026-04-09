@@ -26,9 +26,14 @@
        <a href="/jobs/create"> Post a Job</a>
         <a href="/profile"> My Profile</a>
          <form method="POST" action="/logout" class="inline">
-          @csrf
-          <button type="submit"> Logout</button>
-         </form>
+    @csrf
+
+    <button type="submit" class="flex items-center"  onclick="return confirm('Are you sure you want to logout?')">
+        <img src="{{ asset('images/logout1.png') }}" 
+             alt="Log out"
+             class="w-6 h-6 hover:opacity-70 transition">
+    </button>
+</form>
     @endauth
 
     @guest
