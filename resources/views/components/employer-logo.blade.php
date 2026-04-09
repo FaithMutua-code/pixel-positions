@@ -11,8 +11,8 @@
 @endphp
 
 <img 
-    src="{{ $logo }}" 
-    class="rounded-sm object-cover"
+    src="{{ $logo }}"
+    {{ $attributes->merge(['class' => ' object-cover']) }} 
     style="width: {{ $width }}px; height: {{ $width }}px;"
     alt="employer logo"
 />

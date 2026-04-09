@@ -24,7 +24,10 @@
         </div>
     @auth
        <a href="/jobs/create"> Post a Job</a>
-        <a href="/profile"> My Profile</a>
+       <a href="/profile" class="flex items-center gap-2">
+    <x-employer-logo class="rounded-md" :width="38" :employer="auth()->user()->employer" />
+   
+</a>
          <form method="POST" action="/logout" class="inline">
     @csrf
 
