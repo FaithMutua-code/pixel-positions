@@ -17,7 +17,10 @@
        
         
         <x-forms.input name="title" label="Job Title" placeholder="CEO" value="{{ old('title', $job->title) }}"/>
-        <x-forms.input name="salary" label="Salary" placeholder="$120k" value="{{ old('salary', $job->salary) }}" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <x-forms.input name="salary_min" label="Min Salary (KES)" type="number" value="{{ old('salary_min', $job->salary_min) }}" />
+            <x-forms.input name="salary_max" label="Max Salary (KES)" type="number" value="{{ old('salary_max', $job->salary_max) }}" />
+        </div>
         <x-forms.input name="location" label="Location" placeholder="New York" value="{{ old('location', $job->location) }}"/>
 
         <x-forms.select name="schedule" label="Schedule">

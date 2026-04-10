@@ -8,8 +8,30 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Job;
 
 Route::get('/', [JobController::class, 'index']);
+Route::get('/careers',function(){
+    return view('careers.index');
+});
+Route::get('/salaries',function(){
+    $query = Job::query();
+
+    if (filled(request('salary_min'))) {
+        $query->where('salary_max', '>=', request('salary_min'));
+    }
+
+    if (filled(request('salary_max'))) {
+        $query->where('salary_min', '<=', request('salary_max'));
+    }
+
+    return view('salaries.index', [
+        'jobs' => $query->get(),
+    ]);
+});
+Route::get('/companies',function(){
+    return view('companies.index');
+});
 Route::middleware('auth')->group(function(){
   Route::get('/profile', [ProfileController::class, 'edit']);
 Route::patch('/profile', [ProfileController::class, 'update']);

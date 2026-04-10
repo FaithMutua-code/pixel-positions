@@ -2,8 +2,28 @@
     <x-page-heading>Create Job</x-page-heading>
     <x-forms.form method="POST" action="/jobs" enctype="multipart/form-data">
          @csrf
-        <x-forms.input name="title" label="Job Title" placeholder="CEO" />
-        <x-forms.input name="salary" label="Salary" placeholder="$120k" />
+    <x-forms.input name="title" label="Job Title" placeholder="CEO" />
+        <div class="grid grid-cols-2 gap-4">
+    <x-forms.input 
+        name="salary_min" 
+        label="Salary (KES)" 
+        type="number" 
+        placeholder="e.g. 100000"
+        value="{{ old('salary_min') }}"
+    />
+
+    <x-forms.input 
+        name="salary_max" 
+        label="Max Salary (optional)" 
+        type="number" 
+        placeholder="e.g. 150000"
+        value="{{ old('salary_max') }}"
+    />
+</div>
+
+<p class="text-sm text-gray-400 mt-2">
+    Leave max salary empty if it's a fixed salary.
+</p>
         <x-forms.input name="location" label="Location" placeholder="New York" />
 
         <x-forms.select name="schedule" label="Schedule">

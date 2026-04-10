@@ -13,6 +13,8 @@ class Job extends Model
     protected $fillable = [
         'title',
         'salary',
+        'salary_min',
+        'salary_max',
         'location',
         'schedule',
         'url',
@@ -24,6 +26,21 @@ class Job extends Model
      $tag =Tag::firstOrCreate(['name'=>$name]);  
      $this->tags()->attach($tag);
      return $tag;
+    }
+
+    public function getSalaryAttribute(?string $value): string
+    {
+        if ($value) {
+            return $value;
+        }
+
+        if ($this->salary_min && $this->salary_max) {
+            return $this->salary_min === $this->salary_max
+                ? 'Ksh ' . number_format($this->salary_min)
+                : 'Ksh ' . number_format($this->salary_min) . ' - ' . number_format($this->salary_max);
+        }
+
+        return 'Salary not specified';
     }
       public function tags()
     {

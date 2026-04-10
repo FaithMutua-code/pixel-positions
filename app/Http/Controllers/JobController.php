@@ -41,7 +41,8 @@ class JobController extends Controller
     {
         $attributes = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'salary' => ['required', 'string', 'max:255'],
+            'salary_min' => ['required', 'integer', 'min:0'],
+            'salary_max' => ['nullable', 'integer', 'min:0'],
             'location' => ['required', 'string', 'max:255'],
             'schedule' => ['required', Rule::in(['full-time', 'part-time', 'contract'])],
             'url' => ['required', 'url'],
@@ -49,7 +50,11 @@ class JobController extends Controller
             'tags' => ['nullable', 'string'],
         ]);
 
-        // Handle featured checkbox - set to false if not present
+        $attributes['salary_max'] = $attributes['salary_max'] ?? $attributes['salary_min'];
+        $attributes['salary'] = $attributes['salary_min'] === $attributes['salary_max']
+            ? 'Ksh ' . number_format($attributes['salary_min'])
+            : 'Ksh ' . number_format($attributes['salary_min']) . ' - ' . number_format($attributes['salary_max']);
+
         $attributes['featured'] = $request->boolean('featured');
         $employer = Auth::user()->employer;
 
@@ -112,7 +117,8 @@ class JobController extends Controller
             
             $validated = $request->validate([
                 'title' => ['required', 'string', 'max:255'],
-                'salary' => ['required', 'string', 'max:255'],
+                'salary_min' => ['required', 'integer', 'min:0'],
+                'salary_max' => ['nullable', 'integer', 'min:0'],
                 'location' => ['required', 'string', 'max:255'],
                 'schedule' => ['required', Rule::in(['full-time', 'part-time', 'contract'])],
                 'url' => ['required', 'url'],
@@ -120,9 +126,13 @@ class JobController extends Controller
                 'tags' => ['nullable', 'string'],
             ]);
 
+            $validated['salary_max'] = $validated['salary_max'] ?? $validated['salary_min'];
+            $validated['salary'] = $validated['salary_min'] === $validated['salary_max']
+                ? 'Ksh ' . number_format($validated['salary_min'])
+                : 'Ksh ' . number_format($validated['salary_min']) . ' - ' . number_format($validated['salary_max']);
+
             // Handle featured checkbox - set to false if not present
             $validated['featured'] = $request->boolean('featured');
-
             // Check if user can create featured jobs
             if ($validated['featured'] && !$this->canCreateFeaturedJobs()) {
                 return redirect()->back()->withErrors(['featured' => 'Featured jobs require a premium subscription.']);

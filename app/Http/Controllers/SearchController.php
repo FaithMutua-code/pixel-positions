@@ -8,7 +8,22 @@ class SearchController extends Controller
 {
     public function __invoke()
     {
-        $jobs=Job::with(['employer','tags'])->where('title', 'like', '%' . request('q') . '%')->get();
-        return view('results',['jobs'=>$jobs]);
+        $query = Job::with(['employer','tags']);
+
+        if ($search = request('q')) {
+            $query->where('title', 'like', '%' . $search . '%');
+        }
+
+        if (filled(request('salary_min'))) {
+            $query->where('salary_max', '>=', request('salary_min'));
+        }
+
+        if (filled(request('salary_max'))) {
+            $query->where('salary_min', '<=', request('salary_max'));
+        }
+
+        $jobs = $query->get();
+
+        return view('results', ['jobs' => $jobs]);
     }
 }

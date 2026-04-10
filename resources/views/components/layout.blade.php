@@ -23,7 +23,8 @@
             <a href="/companies">Companies</a>
         </div>
     @auth
-       <a href="/jobs/create"> Post a Job</a>
+
+           <a href="/jobs/create"> Post a Job</a>
        <a href="/profile" class="flex items-center gap-2">
     <x-employer-logo class="rounded-md" :width="38" :employer="auth()->user()->employer" />
    
@@ -34,9 +35,10 @@
     <button type="submit" class="flex items-center"  onclick="return confirm('Are you sure you want to logout?')">
         <img src="{{ asset('images/logout1.png') }}" 
              alt="Log out"
-             class="w-6 h-6 hover:opacity-70 transition">
+             class="hover:opacity-70 transition">
     </button>
 </form>
+
     @endauth
 
     @guest

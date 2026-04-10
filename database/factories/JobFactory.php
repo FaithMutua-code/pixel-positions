@@ -17,10 +17,17 @@ class JobFactory extends Factory
      */
     public function definition(): array
     {
+        $salaryMin = $this->faker->randomElement([50000, 100000, 150000, 200000]);
+        $salaryMax = $this->faker->optional()->randomElement([$salaryMin, $salaryMin + 25000, $salaryMin + 50000]);
+
         return [
             'employer_id' => Employer::factory(),
             'title'=>$this->faker->jobTitle,
-            'salary'=>$this->faker->randomElement(['Ksh 50,000','Ksh 100,000','Ksh 150,000','Ksh 200,000']),
+            'salary_min' => $salaryMin,
+            'salary_max' => $salaryMax ?? $salaryMin,
+            'salary'=>$salaryMax && $salaryMax !== $salaryMin
+                ? 'Ksh ' . number_format($salaryMin) . ' - ' . number_format($salaryMax)
+                : 'Ksh ' . number_format($salaryMin),
             'location'=>'remote',
             'schedule'=>$this->faker->randomElement(['Full Time','Part Time','Contract']),
             'url'=>$this->faker->url,
